@@ -11,7 +11,7 @@ from chaos import clear_chaos, configure_chaos
 from hydradb_client import HydraDBClient
 from kernel import ResilientKernel
 
-DEFAULT_TASK = "Scrape competitor pricing from example.com and notify the team."
+DEFAULT_TASK = "Scrape pricing from https://www.pythonanywhere.com/pricing/ and notify the team."
 
 
 @dataclass

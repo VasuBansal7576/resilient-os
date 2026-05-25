@@ -10,7 +10,8 @@ Verified locally on 2026-05-25:
 
 - `pytest -q` -> `37 passed`
 - `python3 smoke_runner.py --json` ran clean, rate-limit, learned-antibody, auth-expiry, and cascade scenarios
-- Real smoke run used ScrapeGraphAI through Groq and sent a Telegram notification
+- Real smoke run scraped `https://www.pythonanywhere.com/pricing/` with ScrapeGraphAI through Groq and sent a Telegram notification
+- The scrape returned concrete pricing evidence, including `Developer` at `$10/month`, `Custom` at `$10 to $500/month`, and `Beginner` at `$0/month`
 - Smoke sequence ended with `20` memory events, `5` recoveries, and `5` successful immunity memories
 - `bash verify_hydradb.sh` added a memory to HydraDB and recalled it with graph context
 - `AgentPlanner(mode="auto")` selected Groq and produced real `scrape_url` + `send_notification` tool calls
@@ -40,7 +41,7 @@ bash verify_hydradb.sh
 streamlit run dashboard.py
 ```
 
-The fastest demo path is: clean run -> inject rate limit -> recover -> run same rate limit again -> observe `hydradb:exponential_backoff` learned immunity -> show HydraDB recall and dashboard counters.
+The fastest demo path is: scrape the live PythonAnywhere pricing page -> inject rate limit -> recover -> run the same rate limit again -> observe `hydradb:exponential_backoff` learned immunity -> show HydraDB recall and dashboard counters.
 
 ## What Ships
 

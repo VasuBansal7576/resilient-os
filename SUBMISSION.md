@@ -29,7 +29,8 @@ pytest -q
 # 37 passed
 
 python3 smoke_runner.py --json
-# clean run completed
+# clean run scraped https://www.pythonanywhere.com/pricing/
+# extracted real pricing: Developer $10/month, Custom $10 to $500/month, Beginner $0/month
 # rate_limit_first_infection recovered via exponential_backoff
 # rate_limit_learned_antibody recovered via hydradb:exponential_backoff
 # auth_expiry recovered via refresh_token
@@ -42,7 +43,7 @@ bash verify_hydradb.sh
 # recall_preferences returned the inserted rate-limit memory with graph context
 ```
 
-The real smoke run used ScrapeGraphAI through Groq and sent a real Telegram notification. Chat IDs and secrets are intentionally not committed.
+The real smoke run used ScrapeGraphAI through Groq to scrape the PythonAnywhere pricing page and sent a real Telegram notification. Chat IDs and secrets are intentionally not committed.
 
 ## Reproducible Judge Path
 
@@ -76,7 +77,7 @@ streamlit run dashboard.py
 ## Demo Script
 
 1. Open the dashboard with `streamlit run dashboard.py`.
-2. Run the default task with no chaos and show `Last run: Clean`.
+2. Run the default PythonAnywhere pricing task with no chaos and show `Last run: Clean`.
 3. Arm rate-limit chaos on ScrapeGraphAI and run again.
 4. Show the `ERROR` event followed by the `Recovered event`.
 5. Run the same rate-limit scenario again and show `hydradb:exponential_backoff`.
