@@ -1,0 +1,8 @@
+.DS_Store
+.env
+.pytest_cache/
+.resilient_os/
+.streamlit/secrets.toml
+.venv/
+__pycache__/
+*.pyc
