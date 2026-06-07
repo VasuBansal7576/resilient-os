@@ -13,6 +13,7 @@ Verified locally on 2026-05-25:
 - Real smoke run scraped `https://www.pythonanywhere.com/pricing/` with ScrapeGraphAI through Groq and sent a Telegram notification
 - The scrape returned concrete pricing evidence, including `Developer` at `$10/month`, `Custom` at `$10 to $500/month`, and `Beginner` at `$0/month`
 - Smoke sequence ended with `20` memory events, `5` recoveries, and `5` successful immunity memories
+- `python3 ethical_hack_runner.py --json` passed local ethical-red-team checks for SSRF blocking, prompt-injection detection, and tool-abuse detection
 - `bash verify_hydradb.sh` added a memory to HydraDB and recalled it with graph context
 - `AgentPlanner(mode="auto")` selected Groq and produced real `scrape_url` + `send_notification` tool calls
 
@@ -22,6 +23,7 @@ Covered tracks:
 - **Tools:** ScrapeGraphAI, Groq, NVIDIA-compatible fallback path, Telegram, Discord
 - **Recovery:** rate-limit, auth, timeout, cascade, retry-loop, cache, and checkpoint strategies
 - **Adaptation:** successful recoveries become learned antibodies for later failures
+- **Ethical red-team:** local-only abuse harness blocks unsafe scrape targets and flags prompt/tool-abuse attempts
 
 ## Judge Quickstart
 
@@ -36,6 +38,7 @@ Configure `.env` with HydraDB, at least one LLM provider, and one notification c
 
 ```bash
 pytest -q
+python3 ethical_hack_runner.py --json
 python3 smoke_runner.py --json
 bash verify_hydradb.sh
 streamlit run dashboard.py
@@ -53,6 +56,8 @@ The fastest demo path is: scrape the live PythonAnywhere pricing page -> inject 
 - `agent.py` can use Groq/NVIDIA in `auto` or `llm` mode, with deterministic planning available through `scripted`.
 - `dashboard.py` is a Streamlit UI for chaos injection, memory metrics, and execution logs.
 - `smoke_runner.py` provides a terminal proof path for clean, chaos, recovery, learned immunity, auth, and cascade scenarios.
+- `security.py` blocks SSRF-style internal scrape targets and detects prompt/tool-abuse patterns.
+- `ethical_hack_runner.py` runs an authorized local red-team harness without touching third-party systems.
 - `verify_hydradb.sh` verifies the live HydraDB add-memory and recall path.
 
 There is no ScrapeGraph cloud dependency and no `SGAI_API_KEY`. Web extraction uses the open-source `scrapegraphai` Python package.
@@ -116,8 +121,17 @@ Groq is used first when configured. NVIDIA is used as the fallback by the Scrape
 
 ```bash
 pytest -q
+python3 ethical_hack_runner.py --json
 python3 smoke_runner.py --json
 ```
+
+## Ethical Hacking Boundary
+
+ResilientOS does not attack third-party systems. The ethical hacking harness is intentionally local and defensive:
+
+- blocks localhost, private IPs, link-local metadata services, non-HTTP schemes, and URLs with embedded credentials before any scraper or LLM provider is called
+- detects obvious prompt-injection, system-prompt extraction, credential-exfiltration, and destructive tool-abuse attempts
+- routes unsafe tool attempts through the same failure detector, recovery engine, memory logging, and dashboard event trail as other pressure scenarios
 
 ## Dashboard Smoke Flow
 

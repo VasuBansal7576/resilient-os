@@ -19,6 +19,7 @@ The hackathon story is simple:
 - **Tools:** ScrapeGraphAI, Groq, NVIDIA-compatible fallback path, Telegram, Discord.
 - **Recovery:** rate limits, auth expiry, timeouts, cascade failures, retry loops, cached fallback, checkpoint rollback.
 - **Adaptation:** successful recovery memories are reused as learned antibodies on later failures.
+- **Ethical red-team:** authorized local abuse checks block unsafe scrape targets and detect prompt/tool-abuse attempts.
 
 ## Verified Proof
 
@@ -36,6 +37,10 @@ python3 smoke_runner.py --json
 # auth_expiry recovered via refresh_token
 # cascade recovered via circuit_breaker/cache and hydradb:circuit_breaker
 # final smoke state: 20 memory events, 5 recoveries, 5 immunity events
+
+python3 ethical_hack_runner.py --json
+# blocks cloud metadata SSRF, localhost SSRF, file-scheme reads, prompt override,
+# destructive tool abuse, and unsafe scrape execution before provider access
 
 bash verify_hydradb.sh
 # HydraDB tenant status returned healthy infrastructure
@@ -69,6 +74,7 @@ Then run:
 
 ```bash
 pytest -q
+python3 ethical_hack_runner.py --json
 python3 smoke_runner.py --json
 bash verify_hydradb.sh
 streamlit run dashboard.py
@@ -82,8 +88,9 @@ streamlit run dashboard.py
 4. Show the `ERROR` event followed by the `Recovered event`.
 5. Run the same rate-limit scenario again and show `hydradb:exponential_backoff`.
 6. Show the immunity counter increasing.
-7. Run `bash verify_hydradb.sh` to show live HydraDB add/recall with graph context.
-8. Explain that `AGENT_MODE=scripted` only makes the plan deterministic; tools still call real integrations.
+7. Run `python3 ethical_hack_runner.py --json` to show the local authorized red-team checks.
+8. Run `bash verify_hydradb.sh` to show live HydraDB add/recall with graph context.
+9. Explain that `AGENT_MODE=scripted` only makes the plan deterministic; tools still call real integrations.
 
 ## Honest Caveats
 
@@ -91,3 +98,4 @@ streamlit run dashboard.py
 - The HydraDB tenant can be any tenant the user owns. `HYDRADB_SUB_TENANT_ID=resilient-os` isolates this project inside a tenant.
 - Local JSONL memory is generated fallback memory/cache and should stay out of commits.
 - If no notification channel is configured, notification tool calls correctly fail and enter recovery instead of pretending success.
+- Ethical hacking coverage is intentionally limited to authorized local abuse checks and public-web URL boundaries; it does not scan or attack third-party systems.

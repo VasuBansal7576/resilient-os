@@ -9,6 +9,8 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
+from security import validate_public_http_url
+
 load_dotenv()
 
 DEFAULT_SCRAPE_PROMPT = (
@@ -131,7 +133,7 @@ class RealToolRunner:
         raise ValueError(f"Unknown tool: {name}")
 
     def scrape_url(self, args: dict[str, Any], context: dict[str, Any]) -> str:
-        url = _required(args, "url")
+        url = validate_public_http_url(_required(args, "url"))
         prompt = str(args.get("prompt") or DEFAULT_SCRAPE_PROMPT)
 
         if context.get("use_backup") or context.get("use_cache"):

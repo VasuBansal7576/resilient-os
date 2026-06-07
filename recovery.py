@@ -28,6 +28,9 @@ RECOVERY_STRATEGIES: dict[str, list[dict[str, Any]]] = {
         {"name": "break_loop", "action": "halt_retries", "params": {}},
         {"name": "checkpoint_rollback", "action": "checkpoint_rollback", "params": {}},
     ],
+    "security_policy": [
+        {"name": "block_unsafe_tool_call", "action": "skip", "params": {}},
+    ],
     "unknown_error": [
         {"name": "checkpoint_rollback", "action": "checkpoint_rollback", "params": {}},
     ],

@@ -49,6 +49,8 @@ class FailureDetector:
             return "timeout"
         if "503" in error_str or "upstream" in error_str or "service unavailable" in error_str:
             return "cascade_failure"
+        if "security policy" in error_str or "blocked unsafe" in error_str or "non-public ip" in error_str:
+            return "security_policy"
         if "not configured" in error_str or "api key" in error_str or "api_key" in error_str or "missing" in error_str:
             return "auth_failure"
         if self.is_infinite_loop(tool):

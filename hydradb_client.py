@@ -24,6 +24,7 @@ KNOWN_FAILURE_TYPES = (
     "timeout",
     "cascade_failure",
     "infinite_retry_loop",
+    "security_policy",
     "unknown_error",
 )
 
