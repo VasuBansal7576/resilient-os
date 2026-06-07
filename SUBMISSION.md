@@ -42,6 +42,11 @@ python3 ethical_hack_runner.py --json
 # blocks cloud metadata SSRF, localhost SSRF, file-scheme reads, prompt override,
 # destructive tool abuse, and unsafe scrape execution before provider access
 
+python3 hydradb_bounty_assessment.py --json
+# passes 9 low-impact HydraDB API auth/isolation/header checks
+
+# See HYDRADB_BOUNTY_REPORT.md for the live assessment summary.
+
 bash verify_hydradb.sh
 # HydraDB tenant status returned healthy infrastructure
 # memories/add_memory queued successfully
@@ -75,6 +80,7 @@ Then run:
 ```bash
 pytest -q
 python3 ethical_hack_runner.py --json
+python3 hydradb_bounty_assessment.py --json
 python3 smoke_runner.py --json
 bash verify_hydradb.sh
 streamlit run dashboard.py
@@ -89,8 +95,9 @@ streamlit run dashboard.py
 5. Run the same rate-limit scenario again and show `hydradb:exponential_backoff`.
 6. Show the immunity counter increasing.
 7. Run `python3 ethical_hack_runner.py --json` to show the local authorized red-team checks.
-8. Run `bash verify_hydradb.sh` to show live HydraDB add/recall with graph context.
-9. Explain that `AGENT_MODE=scripted` only makes the plan deterministic; tools still call real integrations.
+8. Run `python3 hydradb_bounty_assessment.py --json` to show the HydraDB bounty checks.
+9. Run `bash verify_hydradb.sh` to show live HydraDB add/recall with graph context.
+10. Explain that `AGENT_MODE=scripted` only makes the plan deterministic; tools still call real integrations.
 
 ## Honest Caveats
 
@@ -99,3 +106,4 @@ streamlit run dashboard.py
 - Local JSONL memory is generated fallback memory/cache and should stay out of commits.
 - If no notification channel is configured, notification tool calls correctly fail and enter recovery instead of pretending success.
 - Ethical hacking coverage is intentionally limited to authorized local abuse checks and public-web URL boundaries; it does not scan or attack third-party systems.
+- HydraDB bounty checks are low-impact: no brute force, no customer-data enumeration, and only one benign own-tenant write when `--live-write` is explicitly used.

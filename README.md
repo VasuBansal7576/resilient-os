@@ -14,6 +14,7 @@ Verified locally on 2026-05-25:
 - The scrape returned concrete pricing evidence, including `Developer` at `$10/month`, `Custom` at `$10 to $500/month`, and `Beginner` at `$0/month`
 - Smoke sequence ended with `20` memory events, `5` recoveries, and `5` successful immunity memories
 - `python3 ethical_hack_runner.py --json` passed local ethical-red-team checks for SSRF blocking, prompt-injection detection, and tool-abuse detection
+- `python3 hydradb_bounty_assessment.py --json` passed 9 low-impact HydraDB API auth/isolation/header checks
 - `bash verify_hydradb.sh` added a memory to HydraDB and recalled it with graph context
 - `AgentPlanner(mode="auto")` selected Groq and produced real `scrape_url` + `send_notification` tool calls
 
@@ -39,6 +40,7 @@ Configure `.env` with HydraDB, at least one LLM provider, and one notification c
 ```bash
 pytest -q
 python3 ethical_hack_runner.py --json
+python3 hydradb_bounty_assessment.py --json
 python3 smoke_runner.py --json
 bash verify_hydradb.sh
 streamlit run dashboard.py
@@ -58,6 +60,8 @@ The fastest demo path is: scrape the live PythonAnywhere pricing page -> inject 
 - `smoke_runner.py` provides a terminal proof path for clean, chaos, recovery, learned immunity, auth, and cascade scenarios.
 - `security.py` blocks SSRF-style internal scrape targets and detects prompt/tool-abuse patterns.
 - `ethical_hack_runner.py` runs an authorized local red-team harness without touching third-party systems.
+- `hydradb_bounty_assessment.py` runs low-impact HydraDB API checks for auth enforcement, tenant/sub-tenant isolation, error hygiene, and CORS posture.
+- `HYDRADB_BOUNTY_REPORT.md` summarizes the live HydraDB assessment results and improvement note.
 - `verify_hydradb.sh` verifies the live HydraDB add-memory and recall path.
 
 There is no ScrapeGraph cloud dependency and no `SGAI_API_KEY`. Web extraction uses the open-source `scrapegraphai` Python package.
@@ -122,6 +126,7 @@ Groq is used first when configured. NVIDIA is used as the fallback by the Scrape
 ```bash
 pytest -q
 python3 ethical_hack_runner.py --json
+python3 hydradb_bounty_assessment.py --json
 python3 smoke_runner.py --json
 ```
 
@@ -132,6 +137,8 @@ ResilientOS does not attack third-party systems. The ethical hacking harness is 
 - blocks localhost, private IPs, link-local metadata services, non-HTTP schemes, and URLs with embedded credentials before any scraper or LLM provider is called
 - detects obvious prompt-injection, system-prompt extraction, credential-exfiltration, and destructive tool-abuse attempts
 - routes unsafe tool attempts through the same failure detector, recovery engine, memory logging, and dashboard event trail as other pressure scenarios
+
+The HydraDB bounty assessment stays low impact: it checks auth-required endpoints without credentials, invalid-token rejection, malformed JSON error hygiene, unknown tenant/sub-tenant recall isolation, CORS posture, and optionally one benign own-tenant add/recall probe via `--live-write`.
 
 ## Dashboard Smoke Flow
 
